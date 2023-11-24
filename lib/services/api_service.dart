@@ -2,8 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
-import 'package:movie_db/models/movies_model.dart';
-import 'package:movie_db/models/error_model.dart';
 import 'package:movie_db/models/toprated_model.dart';
 
 import '../models/movie_model.dart';
@@ -40,16 +38,11 @@ class ApiService {
     debugPrint('>>>>response${response.statusCode}');
 
     if (response.statusCode == 200) {
-
       return TopRated.fromJson(jsonDecode(response.body));
-
-    } else {
-
-    }
+    } else {}
   }
 
-  Future<TopRated?>getTopRated(String token)async{
-
+  Future<TopRated?> getTopRated(String token) async {
     String keyword = 'top_rated?';
     final url = baseUrl + keyword + 'api_key=' + apiKey;
 
@@ -59,11 +52,7 @@ class ApiService {
     debugPrint('Response>>>${response.toString()}');
 
     if (response.statusCode == 200) {
-
       return TopRated.fromJson(jsonDecode(response.body));
-
-    } else {
-
-    }
+    } else {}
   }
 }

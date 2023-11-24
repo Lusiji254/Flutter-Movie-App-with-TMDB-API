@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:movie_db/ui/movie_details.dart';
 import 'package:movie_db/services/api_service.dart';
 import 'package:movie_db/models/toprated_model.dart';
+import 'package:movie_db/ui/search.dart';
 
 class TopRatedMovies extends StatefulWidget {
   const TopRatedMovies({super.key});
@@ -36,7 +37,18 @@ class _TopRatedMoviesState extends State<TopRatedMovies> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Center(child:Text('Top Rated Movies')),
+        title: Center(child: Text('Top Rated Movies'),),
+
+        leading: IconButton(
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => Search(),
+              ),
+            );
+          },
+          icon: Icon(Icons.search),
+        ),
       ),
       body: FutureBuilder<TopRated?>(
         future: _apiServices.getTopRated(token),
@@ -51,36 +63,34 @@ class _TopRatedMoviesState extends State<TopRatedMovies> {
             if (snapshot.hasData) {
               final data = snapshot.data?.results;
               child = GridView.builder(
+                padding: EdgeInsets.all(5),
                 itemCount: data?.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3, mainAxisSpacing: 1),
+                  childAspectRatio: (120.0 / 185.0),
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 10.0,
+                  mainAxisSpacing: 10.0,
+                ),
                 itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30.0)),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        GestureDetector(onTap: (){
-
-                          Navigator.of(context, rootNavigator: true).push(
-                             MaterialPageRoute(
-                               builder: (_) =>  MovieDetails(results: data[index], ),),);
-                        },
-                            child:Card(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8.0),
-                              child: Image.network(
-                                  'https://image.tmdb.org/t/p/w500/${data![index].backdropPath!}'),
-                            ),
-
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.of(context, rootNavigator: true).push(
+                        MaterialPageRoute(
+                          builder: (_) => MovieDetails(
+                            results: data[index],
                           ),
                         ),
-                        const SizedBox(
-                          height: 10,
+                      );
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20.0),
+                        image: DecorationImage(
+                          image: NetworkImage(
+                              'https://image.tmdb.org/t/p/w500/${data![index].posterPath!}'),
+                          fit: BoxFit.cover,
                         ),
-                        Text(data![index].title!)
-                      ],
+                      ),
                     ),
                   );
                 },

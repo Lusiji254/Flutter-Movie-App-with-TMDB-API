@@ -65,7 +65,7 @@ class Results {
   Results.fromJson(Map<String, dynamic> json) {
     adult = json['adult'];
     backdropPath = json['backdrop_path'];
-    genreIds = json['genre_ids'].cast<int>();
+    genreIds = json['genre_ids'] != null ? List<int>.from(json['genre_ids']) : null;
     id = json['id'];
     originalLanguage = json['original_language'];
     originalTitle = json['original_title'];

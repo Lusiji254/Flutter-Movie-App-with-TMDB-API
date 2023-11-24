@@ -1,16 +1,12 @@
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:movie_db/home_page.dart';
-import 'package:movie_db/login.dart';
-import 'package:movie_db/signup.dart';
-import 'package:movie_db/ui/favorite_movies.dart';
-import 'package:movie_db/models/toprated_model.dart';
-import 'package:movie_db/ui/top_rated.dart';
-import 'package:hive/hive.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:movie_db/services/login_preference.dart';
+import 'package:movie_db/ui/home_page.dart';
+import 'package:movie_db/ui/login.dart';
+import 'package:movie_db/ui/signup.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-
-
 import 'firebase/options.dart';
 import 'models/movie_hive_model.dart';
 import 'ui/popular_movies.dart';
@@ -20,31 +16,40 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final FirebaseOptions options = DefaultFirebaseOptions.getDefaultOptions();
   await Firebase.initializeApp(options: options);
-  await Hive.initFlutter();
-  Hive.registerAdapter(MovieHiveModelAdapter());
-  await Hive.openBox<MovieHiveModel>('Movies');
-
-  // await Firebase.initializeApp();
-
-
-  runApp(const MyApp());
+  await FirebaseAppCheck.instance.activate(
+      androidProvider: AndroidProvider.debug,
+  );// await Firebase.initializeApp();
+  runApp(SignInCheck());
 }
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class SignInCheck extends StatefulWidget {
+  SignInCheck({Key? key}) : super(key: key);
+  @override
+  _SignInCheckState createState() => _SignInCheckState();
+}
 
+class _SignInCheckState extends State<SignInCheck> {
+  var islogin;
+
+  checkUserLoginState() async {
+    await Shared.getUserSharedPreferences().then((value) {
+      setState(() {
+        islogin = value;
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    checkUserLoginState();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      // initialRoute: 'signup',
-      // routes: {
-      //   //'welcome_screen': (context) => WelcomeScreen(),
-      //   'signup': (context) => Signup(),
-      //   'login': (context) => Login(),
-      //   'home_page': (context) => HomePage()
-      // },
-      home: Signup(),
-
+    debugPrint('>>>>>>>>>>>>>>>>>>>>>>>>>>status$islogin');
+    return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: islogin != null ? islogin ? HomePage() : Login() : Signup(),
     );
   }
 }

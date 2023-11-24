@@ -7,9 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:movie_db/models/toprated_model.dart';
 import 'package:movie_db/ui/movie_details.dart';
 import 'package:movie_db/services/api_service.dart';
-import 'top_rated.dart';
-
-import '../models/movie_model.dart';
+import 'package:movie_db/ui/search.dart';
 
 class Movies extends StatefulWidget {
   const Movies({super.key});
@@ -66,53 +64,90 @@ class _MoviesState extends State<Movies> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Center(child: Text('Popular Movies')),
+        // flexibleSpace: Align(
+        // alignment: Alignment.center,
+        //   child:Row(
+        //   mainAxisAlignment: MainAxisAlignment.center,
+        //   children: [
+        //     Center(
+        //       child: Text(
+        //         'Centered Title',
+        //         style: TextStyle(
+        //           fontSize: 18.0,
+        //           fontWeight: FontWeight.bold,
+        //         ),
+        //       ),
+        //     ),
+        //   ],
+        // ),),
+        // title: Align(
+        //   alignment: Alignment.center,
+        //   child: Row(
+        //     mainAxisAlignment: MainAxisAlignment.center,
+        //     children: [
+        //       Text(
+        //         'Popular Movie',
+        //         style: TextStyle(
+        //           fontSize: 18.0,
+        //           fontWeight: FontWeight.bold,
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
+        title: Center(child: Text('Popular Movies'),),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => Search(),
+              ),
+            );
+          },
+          icon: Icon(Icons.search),
+        ),
       ),
-      // implement FutureBuilder
       body: FutureBuilder<TopRated?>(
         future: _apiServices.getPopularMovies(token),
         builder: (BuildContext context, AsyncSnapshot<TopRated?> snapshot) {
-          Widget child = SizedBox();
+          Widget child = const SizedBox();
           if (snapshot.connectionState == ConnectionState.waiting ||
               snapshot.connectionState == ConnectionState.active) {
-            child = Center(child: CircularProgressIndicator());
+            child = const Center(child: CircularProgressIndicator());
           } else if (snapshot.connectionState == ConnectionState.done) {
             debugPrint('snapshotData${snapshot.data}');
 
             if (snapshot.hasData) {
               final data = snapshot.data?.results;
               child = GridView.builder(
+                padding: EdgeInsets.all(5),
                 itemCount: data?.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3, mainAxisSpacing: 1),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  childAspectRatio: (120.0 / 185.0),
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 10.0,
+                  mainAxisSpacing: 10.0,
+                ),
                 itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30.0)),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        GestureDetector(onTap: (){
-
-                          Navigator.of(context, rootNavigator: true).push(
-                            MaterialPageRoute(
-                              builder: (_) =>  MovieDetails(results: data[index], ),),);
-                        },
-                          child: Card(
-
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8.0),
-                              child: Image.network(
-                                  'https://image.tmdb.org/t/p/w500/' +
-                                      data![index].backdropPath!),
-                            ),
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.of(context, rootNavigator: true).push(
+                        MaterialPageRoute(
+                          builder: (_) => MovieDetails(
+                            results: data[index],
                           ),
                         ),
-                        const SizedBox(
-                          height: 10,
+                      );
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20.0),
+                        image: DecorationImage(
+                          image: NetworkImage(
+                              'https://image.tmdb.org/t/p/w500/${data![index].posterPath!}'),
+                          fit: BoxFit.cover,
                         ),
-                        Text(data![index].title!, style: GoogleFonts.lato(fontSize: 14, fontWeight: FontWeight.normal),)
-                      ],
+                      ),
                     ),
                   );
                 },
