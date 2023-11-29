@@ -25,15 +25,13 @@ class _ProfileState extends State<Profile> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
-
   File? _image;
-
 
   User? _user;
   String _firstName = '';
   String _lastName = '';
   String _email = '';
-  String _profilePic ='';
+  String _profilePic = '';
 
   Future<void> _loadUserInfo() async {
     // Get the currently signed-in user
@@ -111,7 +109,8 @@ class _ProfileState extends State<Profile> {
       debugPrint('>>>>>>>IMAGE${_image?.path}');
 
       // Upload image to Firebase Storage
-      final storageRef = _storage.ref().child('profile_pictures/${_user?.uid}.jpg');
+      final storageRef =
+          _storage.ref().child('profile_pictures/${_user?.uid}.jpg');
       await storageRef.putFile(_image!);
 
       // Get the download URL
@@ -119,18 +118,21 @@ class _ProfileState extends State<Profile> {
       debugPrint('>>>>>>THE URL ${downloadUrl}');
 
       // Update user data in Firestore with the download URL
-      await _firestore.collection('users').doc(_user?.uid).update({'profilePic': downloadUrl});
+      await _firestore
+          .collection('users')
+          .doc(_user?.uid)
+          .update({'profilePic': downloadUrl});
     }
-
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('My Profile'),
-      ),
+      //backgroundColor: Color.fromARGB(255, 33, 10, 18),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
+        //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
         children: [
           // User Image
           SizedBox(
@@ -139,15 +141,19 @@ class _ProfileState extends State<Profile> {
           Stack(
             children: [
               CircleAvatar(
-                radius: 50,
-                backgroundImage:_image != null ? FileImage(_image!) as ImageProvider<Object>? : NetworkImage(_profilePic) as ImageProvider<Object>?,
+                radius: 75,
+                backgroundImage: _image != null
+                    ? FileImage(_image!) as ImageProvider<Object>?
+                    : NetworkImage(_profilePic) as ImageProvider<Object>?,
               ),
               Positioned(
                 bottom: 0,
                 right: 0,
                 child: CircleAvatar(
-                  radius: 20, // Adjust the radius as needed
-                  backgroundColor: Colors.white, // Background color of the inner circle
+                  radius: 20,
+                  // Adjust the radius as needed
+                  backgroundColor: Colors.white,
+                  // Background color of the inner circle
                   child: IconButton(
                     icon: Icon(Icons.add),
                     onPressed: () {
@@ -160,17 +166,33 @@ class _ProfileState extends State<Profile> {
             ],
           ),
           SizedBox(height: 40),
-          Text(
-            '$_firstName $_lastName',
-            style: GoogleFonts.lato(fontSize: 20, fontWeight: FontWeight.normal),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.person),
+              SizedBox(width: 20),
+              Text(
+                '$_firstName $_lastName',
+                style: GoogleFonts.lato(
+                    fontSize: 20, fontWeight: FontWeight.normal),
+              ),
+            ],
           ),
           SizedBox(height: 8),
-          Text(
-            '$_email',
-            style: GoogleFonts.lato(fontSize: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.email),
+              SizedBox(width: 20),
+              Text(
+                '$_email',
+                style: GoogleFonts.lato(fontSize: 20),
+              ),
+            ],
           ),
-          Container(
-            child: Center(
+          Spacer(),
+          Align(
+            alignment: Alignment.bottomCenter,
               child: ElevatedButton(
                 onPressed: () async {
                   _showLogoutDialog();
@@ -179,7 +201,7 @@ class _ProfileState extends State<Profile> {
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
               ),
             ),
-          ),
+          SizedBox(height: 20,)
         ],
       ),
     );

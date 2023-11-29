@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_db/ui/movie_details.dart';
 import 'package:movie_db/services/api_service.dart';
@@ -5,39 +6,37 @@ import 'package:movie_db/models/toprated_model.dart';
 import 'package:movie_db/ui/search.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-class TopRatedMovies extends StatefulWidget {
-  const TopRatedMovies({super.key});
+class Upcoming extends StatefulWidget {
+  const Upcoming({super.key});
 
   @override
-  State<TopRatedMovies> createState() {
-    return _TopRatedMoviesState();
-  }
+  State<Upcoming> createState() => _UpcomingState();
 }
 
-class _TopRatedMoviesState extends State<TopRatedMovies> {
+class _UpcomingState extends State<Upcoming> {
   final _apiServices = ApiService();
 
   final baseUrl =
-      'https://api.themoviedb.org/3/movie/top_rated?api_key=14bf3761ec6892a715b5655eaf54fecc';
+      'https://api.themoviedb.org/3/movie/upcoming?api_key=14bf3761ec6892a715b5655eaf54fecc';
   final apiKey = '14bf3761ec6892a715b5655eaf54fecc';
   String token =
       'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxNGJmMzc2MWVjNjg5MmE3MTViNTY1NWVhZjU0ZmVjYyIsInN1YiI6IjY1NDBlNWM2ZWVjNWI1MDBhZWIyODg4MCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.M468gNmCenEX-lpFcQ_ednEZ9UaaQAHGJp-Z_ZrfI8I';
 
-  Future<TopRated>? getTopRated() {
-    _apiServices.getTopRated(token);
+  Future<TopRated>? getUpcoming() {
+    _apiServices.getUpcoming(token);
   }
 
   @override
   void initState() {
     // TODO: implement initState
-    getTopRated();
+    getUpcoming();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<TopRated?>(
-      future: _apiServices.getTopRated(token),
+      future: _apiServices.getUpcoming(token),
       builder: (BuildContext context, AsyncSnapshot<TopRated?> snapshot) {
         Widget child = SizedBox();
         if (snapshot.connectionState == ConnectionState.waiting ||
@@ -72,18 +71,18 @@ class _TopRatedMoviesState extends State<TopRatedMovies> {
                           height: 200.0,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20.0),
-                          //   image: DecorationImage(
-                          //     image: NetworkImage(
-                          //         'https://image.tmdb.org/t/p/w500/${data![index].posterPath!}'),
-                          //     fit: BoxFit.cover,
-                          //   ),
+                            //   image: DecorationImage(
+                            //     image: NetworkImage(
+                            //         'https://image.tmdb.org/t/p/w500/${data![index].posterPath!}'),
+                            //     fit: BoxFit.cover,
+                            //   ),
                           ),
-                            child:FadeInImage.memoryNetwork(
-                              placeholder: kTransparentImage,
-                              image:
-                              'https://image.tmdb.org/t/p/w500/${data![index].posterPath!}',
-                              fit: BoxFit.cover,
-                            ),
+                          child:FadeInImage.memoryNetwork(
+                            placeholder: kTransparentImage,
+                            image:
+                            'https://image.tmdb.org/t/p/w500/${data![index].posterPath!}',
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                       Expanded(
@@ -125,3 +124,4 @@ class _TopRatedMoviesState extends State<TopRatedMovies> {
     );
   }
 }
+

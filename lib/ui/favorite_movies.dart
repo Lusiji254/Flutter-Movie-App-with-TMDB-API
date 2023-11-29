@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:movie_db/models/toprated_model.dart';
 import 'package:movie_db/ui/search.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 import 'movie_details.dart';
 
@@ -96,20 +97,7 @@ class _FavoriteMoviesState extends State<FavoriteMovies> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Center(child: Text('My Favorites'),),
-
-        leading: IconButton(
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => Search(),
-              ),
-            );
-          },
-          icon: Icon(Icons.search),
-        ),
-      ),
+      backgroundColor: Color.fromARGB(255, 33, 10, 18),
       body: user == null
           ? const Center(
               child: Text('Please log in to view your liked movies.'),
@@ -135,6 +123,8 @@ class _FavoriteMoviesState extends State<FavoriteMovies> {
                   itemBuilder: (context, index) {
                     final movieData =
                         likedMovies[index].data() as Map<String, dynamic>?;
+                    var description = movieData?['description'];
+
                     debugPrint('>>>>>>>>DATA${movieData?['movieTitle']}');
                     debugPrint('>>>>>>>>DATA${movieData?['posterPath']}');
 
@@ -150,31 +140,99 @@ class _FavoriteMoviesState extends State<FavoriteMovies> {
                               getUserLikedMoviesStream(user?.uid as String);
                         });
                       },
-                      child: ListTile(
-                        onTap: () async {
-                          final movieId = movieData?['movieID'].toString();
-                          final Results? movieDetails =
-                              await getMovieDetails(movieId!);
-                          debugPrint('>>>>>WE ARE HERE!!!!!!!!!!!!!!!!');
-                          Navigator.of(context, rootNavigator: true).push(
-                            MaterialPageRoute(
-                              builder: (context) => MovieDetails(
-                                results: movieDetails!,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () async {
+                                final movieId =
+                                    movieData?['movieID'].toString();
+                                final Results? movieDetails =
+                                    await getMovieDetails(movieId!);
+                                Navigator.of(context, rootNavigator: true).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => MovieDetails(
+                                      results: movieDetails!,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                width: 100.0,
+                                height: 150.0,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    image: DecorationImage(
+                                      fit: BoxFit.cover,
+                                      image: NetworkImage(
+                                          'https://image.tmdb.org/t/p/w500/${movieData?['posterPath']}'),
+                                    )),
                               ),
                             ),
-                          );
-                        },
-                        leading: Container(
-                          width: 100,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8.0),
-                            child: Image.network(
-                                'https://image.tmdb.org/t/p/w500/${movieData?['posterPath']}'),
-                          ),
+                            Expanded(
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      movieData?['movieTitle'] ??
+                                          'Unknown Title',
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 18.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4.0),
+                                    Text(
+                                        description!.length > 100
+                                            ? '${description!.substring(0, 100)}...'
+                                            : description!,
+                                        style: TextStyle(color: Colors.grey)),
+                                  ],
+                                ),
+                              ),
+                            )
+                            // ListTile(
+                            //   onTap: () async {
+                            //     final movieId = movieData?['movieID'].toString();
+                            //     final Results? movieDetails =
+                            //         await getMovieDetails(movieId!);
+                            //     debugPrint('>>>>>WE ARE HERE!!!!!!!!!!!!!!!!');
+                            //     Navigator.of(context, rootNavigator: true).push(
+                            //       MaterialPageRoute(
+                            //         builder: (context) => MovieDetails(
+                            //           results: movieDetails!,
+                            //         ),
+                            //       ),
+                            //     );
+                            //   },
+                            //   leading: Container(
+                            //     decoration: BoxDecoration(
+                            //       borderRadius: BorderRadius.circular(
+                            //           10.0), // Adjust the corner radius as needed
+                            //     ),
+                            //     child: ClipRRect(
+                            //       borderRadius: BorderRadius.circular(8.0),
+                            //       child: Image.network(
+                            //         'https://image.tmdb.org/t/p/w500/${movieData?['posterPath']}',
+                            //         width: 200.0, // Adjust the width of the poster as needed
+                            //         height: 200.0,
+                            //         fit: BoxFit.cover,
+                            //       ),
+                            //     ),
+                            //
+                            //   ),
+                            //   title: Text(
+                            //     movieData?['movieTitle'] ?? 'Unknown Title',
+                            //   ),
+                            //   contentPadding: EdgeInsets.fromLTRB(7, 10, 0, 10),
+                            // ),
+                          ],
                         ),
-                        title:
-                            Text(movieData?['movieTitle'] ?? 'Unknown Title'),
-                        contentPadding: EdgeInsets.fromLTRB(7, 10, 0, 10),
                       ),
                     );
                   },

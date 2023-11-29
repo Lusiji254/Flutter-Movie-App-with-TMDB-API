@@ -50,6 +50,7 @@ class _SignupState extends State<Signup> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromARGB(255, 33, 10, 18),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(25, 100, 25, 0),
         child: ProgressHUD(
@@ -68,15 +69,20 @@ class _SignupState extends State<Signup> {
                             'Welcome',
                             //strutStyle:TextStyle(textAlign:TextAlign.left,),
                             style: GoogleFonts.poppins(
-                                fontSize: 55, fontWeight: FontWeight.w600),
+                              fontSize: 55,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
                           ),
                           Text(
                             'Back',
                             //strutStyle:TextStyle(textAlign:TextAlign.left,),
                             style: GoogleFonts.poppins(
-                                fontSize: 55,
-                                fontWeight: FontWeight.w600,
-                                height: 0.8),
+                              fontSize: 55,
+                              fontWeight: FontWeight.w600,
+                              height: 0.8,
+                              color: Colors.white,
+                            ),
                           ),
                         ],
                       ),
@@ -87,14 +93,17 @@ class _SignupState extends State<Signup> {
                         children: [
                           CircleAvatar(
                             radius: 50,
+                            backgroundColor: Colors.deepOrange,
                             //backgroundImage: NetworkImage('your_image_url_here'),
                           ),
                           Positioned(
                             bottom: 0,
                             right: 0,
                             child: CircleAvatar(
-                              radius: 20, // Adjust the radius as needed
-                              backgroundColor: Colors.white, // Background color of the inner circle
+                              radius: 20,
+                              // Adjust the radius as needed
+                              backgroundColor: Colors.white,
+                              // Background color of the inner circle
                               child: IconButton(
                                 icon: Icon(Icons.add),
                                 onPressed: () {
@@ -105,15 +114,14 @@ class _SignupState extends State<Signup> {
                           ),
                         ],
                       )
-
                     ],
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB( 0, 8, 0, 30),
+                    padding: const EdgeInsets.fromLTRB(0, 8, 0, 30),
                     child: Text(
                       'Sign up to join',
-                      style: GoogleFonts.poppins(fontSize: 20, decorationColor: Colors.grey),
-                      selectionColor: Colors.grey,
+                      style: GoogleFonts.poppins(
+                          fontSize: 20, color: Colors.white),
                     ),
                   ),
                   Padding(
@@ -121,18 +129,19 @@ class _SignupState extends State<Signup> {
                         horizontal: 0, vertical: 8.0),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.blueGrey.shade100,
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                       child: TextFormField(
                         controller: _firstnameController,
                         keyboardType: TextInputType.text,
-                        decoration:
-                             InputDecoration(
-                                border: InputBorder.none,
-                                labelText: "Firstname",
-                               contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0),
-                               labelStyle: GoogleFonts.poppins(fontSize: 16),),
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          labelText: "Firstname",
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 12.0),
+                          labelStyle: GoogleFonts.poppins(fontSize: 16),
+                        ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter your firstname';
@@ -150,18 +159,19 @@ class _SignupState extends State<Signup> {
                         horizontal: 0, vertical: 8.0),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.blueGrey.shade100,
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                       child: TextFormField(
                         controller: _lastnameController,
                         keyboardType: TextInputType.text,
-                        decoration:
-                         InputDecoration(
-                           border: InputBorder.none,
-                           labelText: "Lastname",
-                           contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0),
-                           labelStyle: GoogleFonts.poppins(fontSize: 16),),
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          labelText: "Lastname",
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 12.0),
+                          labelStyle: GoogleFonts.poppins(fontSize: 16),
+                        ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter your firstname';
@@ -176,16 +186,17 @@ class _SignupState extends State<Signup> {
                         horizontal: 0, vertical: 8.0),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.blueGrey.shade100,
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                       child: TextFormField(
                         controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
-                        decoration:  InputDecoration(
+                        decoration: InputDecoration(
                           border: InputBorder.none,
                           labelText: 'Email',
-                          contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0),
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 12.0),
                           labelStyle: GoogleFonts.poppins(fontSize: 16),
                           // fillColor: Colors.grey,
                           // filled: true,
@@ -204,16 +215,17 @@ class _SignupState extends State<Signup> {
                         horizontal: 0, vertical: 8.0),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.blueGrey.shade100,
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                       child: TextFormField(
                         controller: _passwordController,
                         obscureText: true,
-                        decoration:  InputDecoration(
+                        decoration: InputDecoration(
                           border: InputBorder.none,
                           labelText: 'Password',
-                          contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0),
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 12.0),
                           labelStyle: GoogleFonts.poppins(fontSize: 16),
                           // fillColor: Colors.blueGrey.shade100,
                           // filled: true,
@@ -227,16 +239,23 @@ class _SignupState extends State<Signup> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 140,),
+                  SizedBox(
+                    height: 140,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('Have an account?',
-                          style: GoogleFonts.poppins(fontSize: 16)),
+                      Text(
+                        'Have an account?',
+                        style: GoogleFonts.poppins(
+                            fontSize: 16, color: Colors.white),
+                      ),
                       TextButton(
                           child: Text('Sign in',
                               style: GoogleFonts.poppins(
-                                  fontSize: 16, fontWeight: FontWeight.bold)),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.deepOrange)),
                           onPressed: () {
                             Navigator.of(context)
                                 .push(MaterialPageRoute(builder: (context) {
@@ -245,7 +264,7 @@ class _SignupState extends State<Signup> {
                           })
                     ],
                   ),
-                   Padding(
+                  Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 8, vertical: 16.0),
                     child: Center(
@@ -262,13 +281,15 @@ class _SignupState extends State<Signup> {
                         },
                         child: const Text('Signup'),
                         style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.deepOrange,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10.0)),
                           minimumSize: Size(double.infinity, 50),
+                        ),
                       ),
                     ),
                   ),
-                   ),],
+                ],
               ),
             ),
           ),

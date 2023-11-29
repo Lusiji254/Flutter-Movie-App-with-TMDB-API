@@ -33,6 +33,8 @@ class ApiService {
     String keyword = 'popular?';
     final url = baseUrl + keyword + 'api_key=' + apiKey;
 
+    debugPrint(url);
+
     final response = await http.get(Uri.parse(url));
     debugPrint('>>>>response$response');
     debugPrint('>>>>response${response.statusCode}');
@@ -55,4 +57,31 @@ class ApiService {
       return TopRated.fromJson(jsonDecode(response.body));
     } else {}
   }
+  Future<TopRated?> getUpcoming(String token) async {
+    String keyword = 'upcoming?';
+    final url = baseUrl + keyword + 'api_key=' + apiKey;
+
+    final response = await http.get(Uri.parse(url));
+    debugPrint('>>>>response$response');
+    debugPrint('>>>>response${response.statusCode}');
+    debugPrint('Response>>>${response.toString()}');
+
+    if (response.statusCode == 200) {
+      return TopRated.fromJson(jsonDecode(response.body));
+    } else {}
+  }
+
+  Future<TopRated?> getCategory(String token, String keyword) async {
+    final url = baseUrl + keyword + 'api_key=' + apiKey;
+
+    final response = await http.get(Uri.parse(url));
+    debugPrint('>>>>response$response.');
+    debugPrint('>>>>response: ${response.statusCode}');
+    debugPrint('Response>>>${response.toString()}');
+
+    if (response.statusCode == 200) {
+      return TopRated.fromJson(jsonDecode(response.body));
+    } else {}
+  }
+
 }

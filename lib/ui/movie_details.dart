@@ -130,7 +130,7 @@ class _MovieDetailsState extends State<MovieDetails> {
                           widget.results.id!,
                           widget.results.title!,
                           widget.results.overview!,
-                          widget.results.backdropPath!);
+                          widget.results.posterPath!);
                     },
                   ),
                 ],
