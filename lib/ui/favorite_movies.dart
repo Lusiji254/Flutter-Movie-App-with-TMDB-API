@@ -1,14 +1,10 @@
 import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:movie_db/models/toprated_model.dart';
-import 'package:movie_db/ui/search.dart';
-import 'package:transparent_image/transparent_image.dart';
-
 import 'movie_details.dart';
 
 class FavoriteMovies extends StatefulWidget {
@@ -68,7 +64,7 @@ class _FavoriteMoviesState extends State<FavoriteMovies> {
     // final data = json.decode(response.body);
 
     if (response.statusCode == 200) {
-      debugPrint('SUCCESSSSSSSS');
+      debugPrint('SUCCESS');
       var results = Results.fromJson(jsonDecode(response.body));
       debugPrint('Results>>>${results.toString()}');
       return results;
@@ -118,28 +114,37 @@ class _FavoriteMoviesState extends State<FavoriteMovies> {
 
                 final likedMovies = snapshot.data!.docs;
 
-                return ListView.builder(
+                return GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    childAspectRatio: (110.0 / 150.0),
+                    crossAxisCount: 3,
+                    // mainAxisSpacing: 10.0,
+                  ),
                   itemCount: likedMovies.length,
                   itemBuilder: (context, index) {
                     final movieData =
                         likedMovies[index].data() as Map<String, dynamic>?;
                     var description = movieData?['description'];
 
-                    debugPrint('>>>>>>>>DATA${movieData?['movieTitle']}');
-                    debugPrint('>>>>>>>>DATA${movieData?['posterPath']}');
-
                     return Dismissible(
                       key: ValueKey(movieData?['movieTitle']),
                       onDismissed: (direction) async {
                         await deleteFavoriteMovie(
                             user?.uid as String, movieData?['movieTitle']);
-
-                        // Update the stream to reflect the removed item.
                         setState(() {
                           _likedMoviesStream =
                               getUserLikedMoviesStream(user?.uid as String);
                         });
                       },
+                      background: Container(
+                        color: Colors.red.withOpacity(0.5),
+                        alignment: Alignment.centerRight,
+                        //padding: EdgeInsets.only(right: 16.0),
+                        child: Icon(
+                          Icons.delete,
+                          color: Colors.white,
+                        ),
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Row(
@@ -158,79 +163,14 @@ class _FavoriteMoviesState extends State<FavoriteMovies> {
                                   ),
                                 );
                               },
-                              child: Container(
-                                width: 100.0,
-                                height: 150.0,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20.0),
-                                    image: DecorationImage(
-                                      fit: BoxFit.cover,
-                                      image: NetworkImage(
-                                          'https://image.tmdb.org/t/p/w500/${movieData?['posterPath']}'),
-                                    )),
-                              ),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      movieData?['movieTitle'] ??
-                                          'Unknown Title',
-                                      style: TextStyle(
-                                        color: Colors.grey,
-                                        fontSize: 18.0,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    SizedBox(height: 4.0),
-                                    Text(
-                                        description!.length > 100
-                                            ? '${description!.substring(0, 100)}...'
-                                            : description!,
-                                        style: TextStyle(color: Colors.grey)),
-                                  ],
+                              child: Card(
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                  child: Image.network(
+                                      'https://image.tmdb.org/t/p/w500/${movieData?['posterPath']}'),
                                 ),
                               ),
-                            )
-                            // ListTile(
-                            //   onTap: () async {
-                            //     final movieId = movieData?['movieID'].toString();
-                            //     final Results? movieDetails =
-                            //         await getMovieDetails(movieId!);
-                            //     debugPrint('>>>>>WE ARE HERE!!!!!!!!!!!!!!!!');
-                            //     Navigator.of(context, rootNavigator: true).push(
-                            //       MaterialPageRoute(
-                            //         builder: (context) => MovieDetails(
-                            //           results: movieDetails!,
-                            //         ),
-                            //       ),
-                            //     );
-                            //   },
-                            //   leading: Container(
-                            //     decoration: BoxDecoration(
-                            //       borderRadius: BorderRadius.circular(
-                            //           10.0), // Adjust the corner radius as needed
-                            //     ),
-                            //     child: ClipRRect(
-                            //       borderRadius: BorderRadius.circular(8.0),
-                            //       child: Image.network(
-                            //         'https://image.tmdb.org/t/p/w500/${movieData?['posterPath']}',
-                            //         width: 200.0, // Adjust the width of the poster as needed
-                            //         height: 200.0,
-                            //         fit: BoxFit.cover,
-                            //       ),
-                            //     ),
-                            //
-                            //   ),
-                            //   title: Text(
-                            //     movieData?['movieTitle'] ?? 'Unknown Title',
-                            //   ),
-                            //   contentPadding: EdgeInsets.fromLTRB(7, 10, 0, 10),
-                            // ),
+                            ),
                           ],
                         ),
                       ),

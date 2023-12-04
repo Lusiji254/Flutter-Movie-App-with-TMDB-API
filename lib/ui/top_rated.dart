@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:movie_db/ui/movie_details.dart';
 import 'package:movie_db/services/api_service.dart';
 import 'package:movie_db/models/toprated_model.dart';
-import 'package:movie_db/ui/search.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class TopRatedMovies extends StatefulWidget {
@@ -51,7 +50,7 @@ class _TopRatedMoviesState extends State<TopRatedMovies> {
             child = ListView.builder(
               itemCount: data?.length,
               itemBuilder: (BuildContext context, int index) {
-                var description = data?[index].overview ;
+                var description = data?[index].overview;
 
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -72,18 +71,13 @@ class _TopRatedMoviesState extends State<TopRatedMovies> {
                           height: 200.0,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20.0),
-                          //   image: DecorationImage(
-                          //     image: NetworkImage(
-                          //         'https://image.tmdb.org/t/p/w500/${data![index].posterPath!}'),
-                          //     fit: BoxFit.cover,
-                          //   ),
                           ),
-                            child:FadeInImage.memoryNetwork(
-                              placeholder: kTransparentImage,
-                              image:
-                              'https://image.tmdb.org/t/p/w500/${data![index].posterPath!}',
-                              fit: BoxFit.cover,
-                            ),
+                          child: FadeInImage.memoryNetwork(
+                            placeholder: kTransparentImage,
+                            image:
+                                'https://image.tmdb.org/t/p/w500/${data![index].posterPath!}',
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                       Expanded(
@@ -106,7 +100,11 @@ class _TopRatedMoviesState extends State<TopRatedMovies> {
                                 style: TextStyle(color: Colors.grey),
                               ),
                               SizedBox(height: 4.0),
-                              Text(description!.length > 100 ? '${description!.substring(0,100)}...' : description!, style: TextStyle(color: Colors.grey)),
+                              Text(
+                                  description!.length > 100
+                                      ? '${description!.substring(0, 100)}...'
+                                      : description!,
+                                  style: TextStyle(color: Colors.grey)),
                             ],
                           ),
                         ),

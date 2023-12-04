@@ -1,15 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:movie_db/ui/popular_movies.dart';
 import 'package:movie_db/ui/profile.dart';
-import 'package:movie_db/ui/search.dart';
-import 'package:movie_db/ui/top_rated.dart';
 import 'package:movie_db/ui/favorite_movies.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
-
 import 'home_page.dart';
-import 'login.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -27,28 +21,22 @@ class _HomePageState extends State<HomePage> {
     const Profile()
   ];
   final List<PersistentBottomNavBarItem> _navBarsItems = [
-    // PersistentBottomNavBarItem(
-    //   icon: const Icon(Icons.local_fire_department),
-    //   title: ('Popular'),
-    //   activeColorPrimary: CupertinoColors.activeOrange,
-    //   inactiveColorPrimary: CupertinoColors.systemGrey,
-    // ),
     PersistentBottomNavBarItem(
       icon: const Icon(Icons.home),
       title: ('Home'),
-      activeColorPrimary: Colors.yellow,
+      activeColorPrimary: Colors.deepOrange,
       inactiveColorPrimary: CupertinoColors.systemGrey,
     ),
     PersistentBottomNavBarItem(
       icon: const Icon(Icons.favorite),
       title: ('Favorites'),
-      activeColorPrimary: Colors.red,
+      activeColorPrimary: Colors.deepOrange,
       inactiveColorPrimary: CupertinoColors.systemGrey,
     ),
     PersistentBottomNavBarItem(
       icon: const Icon(Icons.person),
       title: ('Profile'),
-      activeColorPrimary: Colors.blue,
+      activeColorPrimary: Colors.deepOrange,
       inactiveColorPrimary: CupertinoColors.systemGrey,
     )
   ];
@@ -64,13 +52,11 @@ class _HomePageState extends State<HomePage> {
         home: DefaultTabController(
           length: 3, // Number of tabs (Popular Movies and Top Rated Movies)
           child: Scaffold(
-            //backgroundColor: Color.fromARGB(255, 201, 181, 239),
             appBar: AppBar(
               elevation: 0.0,
               backgroundColor: Color.fromARGB(255, 33, 10, 18),
-
             ),
-            endDrawer: Drawer(),
+            endDrawer: Drawer(surfaceTintColor: Colors.deepOrange,),
             body: PersistentTabView(
               context,
               controller: _controller,
@@ -84,8 +70,7 @@ class _HomePageState extends State<HomePage> {
               hideNavigationBarWhenKeyboardShows: true,
               decoration: NavBarDecoration(
                 borderRadius: BorderRadius.circular(10.0),
-                colorBehindNavBar:Color.fromARGB(255, 33, 10, 18),
-
+                colorBehindNavBar: Color.fromARGB(255, 33, 10, 18),
               ),
               popAllScreensOnTapOfSelectedTab: true,
               popActionScreens: PopActionScreensType.all,

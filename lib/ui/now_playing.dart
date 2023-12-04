@@ -1,13 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
-
 import 'package:flutter/material.dart';
 import 'package:movie_db/models/toprated_model.dart';
 import 'package:movie_db/ui/movie_details.dart';
 import 'package:movie_db/services/api_service.dart';
-import 'package:movie_db/ui/search.dart';
 
 class NowPlaying extends StatefulWidget {
   const NowPlaying({super.key});
@@ -47,15 +44,8 @@ class _NowPlayingState extends State<NowPlaying> {
   List<Results>? results = [];
   TopRated? moviesModel;
 
-  Future<TopRated>? getPopularMovies() {
-    _apiServices.getPopularMovies(token);
-  }
-
   @override
   void initState() {
-    // getAllMovies();
-    // getPopularMovies();
-
     // TODO: implement initState
     super.initState();
   }
@@ -63,61 +53,61 @@ class _NowPlayingState extends State<NowPlaying> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<TopRated?>(
-        future: _apiServices.getPopularMovies(token),
-        builder: (BuildContext context, AsyncSnapshot<TopRated?> snapshot) {
-          Widget child = const SizedBox();
-          if (snapshot.connectionState == ConnectionState.waiting ||
-              snapshot.connectionState == ConnectionState.active) {
-            child = const Center(child: CircularProgressIndicator());
-          } else if (snapshot.connectionState == ConnectionState.done) {
-            debugPrint('snapshotData${snapshot.data}');
+      future: _apiServices.getPopularMovies(token),
+      builder: (BuildContext context, AsyncSnapshot<TopRated?> snapshot) {
+        Widget child = const SizedBox();
+        if (snapshot.connectionState == ConnectionState.waiting ||
+            snapshot.connectionState == ConnectionState.active) {
+          child = const Center(
+              child: CircularProgressIndicator(color: Colors.deepOrange));
+        } else if (snapshot.connectionState == ConnectionState.done) {
+          debugPrint('snapshotData${snapshot.data}');
 
-            if (snapshot.hasData) {
-              final data = snapshot.data?.results;
-              child = Container(
-                margin: const EdgeInsets.only(right: 10),
-                height: 200.0,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  padding: EdgeInsets.all(5),
-                  itemCount: data?.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.of(context, rootNavigator: true).push(
-                          MaterialPageRoute(
-                            builder: (_) => MovieDetails(
-                              results: data[index],
-                            ),
+          if (snapshot.hasData) {
+            final data = snapshot.data?.results;
+            child = Container(
+              //margin: const EdgeInsets.only(right: 10),
+              height: 200.0,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                //padding: EdgeInsets.all(5),
+                itemCount: data?.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.of(context, rootNavigator: true).push(
+                        MaterialPageRoute(
+                          builder: (_) => MovieDetails(
+                            results: data[index],
                           ),
-                        );
-                      },
+                        ),
+                      );
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.only(left: 10, top: 10),
                       child: Container(
-                        margin: const EdgeInsets.only(left: 20, top: 10),
-                        child: Container(
-                          width: 120,
-                          height: 150,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20.0),
-                            image: DecorationImage(
-                              image: NetworkImage(
-                                  'https://image.tmdb.org/t/p/w500/${data![index].posterPath!}'),
-                              fit: BoxFit.cover,
-                            ),
+                        width: 120,
+                        height: 150,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20.0),
+                          image: DecorationImage(
+                            image: NetworkImage(
+                                'https://image.tmdb.org/t/p/w500/${data![index].posterPath!}'),
+                            fit: BoxFit.cover,
                           ),
-                          //child: Text(data[index].title!),
                         ),
                       ),
-                    );
-                  },
-                ),
-              );
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            }
+                    ),
+                  );
+                },
+              ),
+            );
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
           }
-          return child;
-        },
-      );
+        }
+        return child;
+      },
+    );
   }
 }

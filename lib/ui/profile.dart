@@ -40,7 +40,7 @@ class _ProfileState extends State<Profile> {
     if (_user != null) {
       // Fetch additional user information from Firestore
       DocumentSnapshot userDoc =
-          await _firestore.collection('users').doc(_user!.uid).get();
+      await _firestore.collection('users').doc(_user!.uid).get();
 
       if (userDoc.exists) {
         setState(() {
@@ -86,7 +86,7 @@ class _ProfileState extends State<Profile> {
                   msg: 'Logged out successfully',
                   toastLength: Toast.LENGTH_SHORT,
                   gravity: ToastGravity.BOTTOM,
-                  backgroundColor: Colors.grey,
+                  backgroundColor: Colors.blueGrey,
                   textColor: Colors.white,
                 );
               },
@@ -110,7 +110,7 @@ class _ProfileState extends State<Profile> {
 
       // Upload image to Firebase Storage
       final storageRef =
-          _storage.ref().child('profile_pictures/${_user?.uid}.jpg');
+      _storage.ref().child('profile_pictures/${_user?.uid}.jpg');
       await storageRef.putFile(_image!);
 
       // Get the download URL
@@ -128,11 +128,9 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //backgroundColor: Color.fromARGB(255, 33, 10, 18),
+      backgroundColor: Color.fromARGB(255, 33, 10, 18),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
-        //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
         children: [
           // User Image
           SizedBox(
@@ -141,7 +139,8 @@ class _ProfileState extends State<Profile> {
           Stack(
             children: [
               CircleAvatar(
-                radius: 75,
+                backgroundColor: Colors.deepOrange,
+                radius: 100,
                 backgroundImage: _image != null
                     ? FileImage(_image!) as ImageProvider<Object>?
                     : NetworkImage(_profilePic) as ImageProvider<Object>?,
@@ -155,7 +154,7 @@ class _ProfileState extends State<Profile> {
                   backgroundColor: Colors.white,
                   // Background color of the inner circle
                   child: IconButton(
-                    icon: Icon(Icons.add),
+                    icon: Icon(Icons.add, color: Colors.deepOrange,),
                     onPressed: () {
                       _selectImage();
                       // Handle the IconButton press
@@ -169,12 +168,12 @@ class _ProfileState extends State<Profile> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.person),
+              Icon(Icons.person, color: Colors.deepOrange,),
               SizedBox(width: 20),
               Text(
                 '$_firstName $_lastName',
                 style: GoogleFonts.lato(
-                    fontSize: 20, fontWeight: FontWeight.normal),
+                    fontSize: 20, fontWeight: FontWeight.normal, color: Colors.white),
               ),
             ],
           ),
@@ -182,25 +181,25 @@ class _ProfileState extends State<Profile> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.email),
+              Icon(Icons.email, color: Colors.deepOrange,),
               SizedBox(width: 20),
               Text(
                 '$_email',
-                style: GoogleFonts.lato(fontSize: 20),
+                style: GoogleFonts.lato(fontSize: 20, color: Colors.white),
               ),
             ],
           ),
           Spacer(),
           Align(
             alignment: Alignment.bottomCenter,
-              child: ElevatedButton(
-                onPressed: () async {
-                  _showLogoutDialog();
-                },
-                child: Text('Sign Out'),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-              ),
+            child: ElevatedButton(
+              onPressed: () async {
+                _showLogoutDialog();
+              },
+              child: Text('Sign Out'),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             ),
+          ),
           SizedBox(height: 20,)
         ],
       ),

@@ -3,7 +3,6 @@ import 'package:movie_db/models/toprated_model.dart';
 import 'package:movie_db/ui/movie_details.dart';
 import 'package:movie_db/services/api_service.dart';
 
-
 class Movies extends StatefulWidget {
   final int selectedGenreId;
 
@@ -50,7 +49,8 @@ class _MoviesState extends State<Movies> {
         Widget child = SizedBox();
         if (snapshot.connectionState == ConnectionState.waiting ||
             snapshot.connectionState == ConnectionState.active) {
-          child = Center(child: CircularProgressIndicator());
+          child = Center(
+              child: CircularProgressIndicator(color: Colors.deepOrange));
         } else if (snapshot.connectionState == ConnectionState.done) {
           debugPrint('snapshotData${snapshot.data}');
 
@@ -60,71 +60,80 @@ class _MoviesState extends State<Movies> {
             debugPrint(selectedGenreId.toString());
             final data = filterMoviesByGenre(dataResults, selectedGenreId);
             debugPrint('>>>Popular:   ${data}');
-            child = ListView.builder(
-              itemCount: data?.length,
-              itemBuilder: (BuildContext context, int index) {
-                var description = data?[index].overview;
+            if (data != null && data.isNotEmpty) {
+              child = ListView.builder(
+                itemCount: data?.length,
+                itemBuilder: (BuildContext context, int index) {
+                  var description = data?[index].overview;
 
-                debugPrint(data?[index].title);
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context, rootNavigator: true).push(
-                            MaterialPageRoute(
-                              builder: (_) => MovieDetails(
-                                results: data[index],
+                  debugPrint(data?[index].title);
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context, rootNavigator: true).push(
+                              MaterialPageRoute(
+                                builder: (_) => MovieDetails(
+                                  results: data[index],
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                        child: Container(
-                          width: 150.0,
-                          height: 200.0,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20.0),
-                            image: DecorationImage(
-                              image: NetworkImage(
-                                  'https://image.tmdb.org/t/p/w500/${data![index].posterPath!}'),
-                              fit: BoxFit.cover,
+                            );
+                          },
+                          child: Container(
+                            width: 150.0,
+                            height: 200.0,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20.0),
+                              image: DecorationImage(
+                                image: NetworkImage(
+                                    'https://image.tmdb.org/t/p/w500/${data![index].posterPath!}'),
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      SizedBox(width: 8.0),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              data[index].title!,
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.bold,
+                        SizedBox(width: 8.0),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                data[index].title!,
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                            SizedBox(height: 4.0),
-                            Text(
-                              data[index].releaseDate!,
-                              style: TextStyle(color: Colors.grey),
-                            ),
-                            SizedBox(height: 4.0),
-                            Text(
-                                description!.length > 100
-                                    ? '${description!.substring(0, 100)}...'
-                                    : description!,
-                                style: TextStyle(color: Colors.grey)),
-                          ],
+                              SizedBox(height: 4.0),
+                              Text(
+                                data[index].releaseDate!,
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                              SizedBox(height: 4.0),
+                              Text(
+                                  description!.length > 100
+                                      ? '${description!.substring(0, 100)}...'
+                                      : description!,
+                                  style: TextStyle(color: Colors.grey)),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            );
+                      ],
+                    ),
+                  );
+                },
+              );
+            } else {
+              // If data is empty, show a message
+              child = Center(
+                  child: Text(
+                'No movies yet ;)',
+                style: TextStyle(color: Colors.white),
+              ));
+            }
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           }

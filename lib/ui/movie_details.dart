@@ -51,8 +51,13 @@ class _MovieDetailsState extends State<MovieDetails> {
     });
   }
 
-  Future<void> _toggleLike(String userId, int movieID, String movieTitle,
-      String description, String posterPath) async {
+  Future<void> _toggleLike(
+    String userId,
+    int movieID,
+    String movieTitle,
+    String description,
+    String posterPath,
+  ) async {
     final favoriteListCollection =
         FirebaseFirestore.instance.collection('favoriteList');
 
@@ -101,76 +106,109 @@ class _MovieDetailsState extends State<MovieDetails> {
     return ModalProgressHUD(
       inAsyncCall: isLike == null,
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(widget.results.title!),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
-                child: Image.network(
-                    'https://image.tmdb.org/t/p/w500/${widget.results.backdropPath!}'),
+        backgroundColor: Color.fromARGB(255, 33, 10, 18),
+        body: CustomScrollView(
+          // sliver app bar
+          slivers: [
+            SliverAppBar(
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              expandedHeight: MediaQuery.of(context).size.height / 2.1,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Image.network(
+                  'https://image.tmdb.org/t/p/w500/${widget.results.posterPath!}',
+                  fit: BoxFit.cover,
+                ),
               ),
-              const SizedBox(
-                height: 10,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  IconButton(
-                    icon: Icon(isLike ? Icons.favorite : Icons.favorite_border),
-                    color: Colors.red,
-                    onPressed: () {
-                      debugPrint('>>>Clicked');
-                      _toggleLike(
-                          user!.uid,
-                          widget.results.id!,
+            ),
+            SliverList(
+              delegate: SliverChildBuilderDelegate((ctx, _) {
+                return Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Center(
+                        child: Text(
                           widget.results.title!,
-                          widget.results.overview!,
-                          widget.results.posterPath!);
-                    },
+                          style: GoogleFonts.poppins(
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.calendar_month, color: Colors.white),
+                              SizedBox(width: 20),
+                              Text(
+                                widget.results.releaseDate!,
+                                style: GoogleFonts.poppins(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.white),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.star, color: Colors.white),
+                              SizedBox(width: 20),
+                              Text(
+                                widget.results.voteAverage!.toString(),
+                                style: GoogleFonts.poppins(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.white),
+                              ),
+                            ],
+                          ),
+                          IconButton(
+                            icon: Icon(isLike
+                                ? Icons.favorite
+                                : Icons.favorite_border),
+                            color: Colors.red,
+                            onPressed: () {
+                              debugPrint('>>>Clicked');
+                              _toggleLike(
+                                user!.uid,
+                                widget.results.id!,
+                                widget.results.title!,
+                                widget.results.overview!,
+                                widget.results.posterPath!,
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                      Text(
+                        'Description',
+                        style: GoogleFonts.poppins(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
+                      Text(
+                        widget.results.overview!,
+                        style: GoogleFonts.poppins(
+                            fontSize: 18,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.white),
+                      ),
+                    ],
                   ),
-                ],
-              )
-              // SizedBox(
-              //   child: IconButton(
-              //     onPressed: () {},
-              //     icon: const Icon(
-              //       Icons.favorite_border,
-              //         color: Colors.red,
-              //     ),
-              //   ),
-              // ),
-              ,
-              Row(
-                children: [
-                  Text(
-                    'Release Date : ',
-                    style: GoogleFonts.lato(
-                        fontSize: 19, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    widget.results.releaseDate!,
-                    style: GoogleFonts.lato(
-                        fontSize: 18, fontWeight: FontWeight.normal),
-                  ),
-                ],
-              ),
-              Text(
-                'Description:',
-                style:
-                    GoogleFonts.lato(fontSize: 19, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                widget.results.overview!,
-                style: GoogleFonts.lato(
-                    fontSize: 18, fontWeight: FontWeight.normal),
-              ),
-            ],
-          ),
+                );
+              }, childCount: 1),
+            ),
+          ],
         ),
       ),
     );

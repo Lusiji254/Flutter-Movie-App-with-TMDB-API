@@ -6,29 +6,29 @@ import 'package:movie_db/services/login_preference.dart';
 import 'package:movie_db/ui/navigation.dart';
 import 'package:movie_db/ui/login.dart';
 import 'package:movie_db/ui/signup.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase/options.dart';
-import 'models/movie_hive_model.dart';
-import 'ui/popular_movies.dart';
-
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
   final FirebaseOptions options = DefaultFirebaseOptions.getDefaultOptions();
   await Firebase.initializeApp(options: options);
   await FirebaseAppCheck.instance.activate(
-      androidProvider: AndroidProvider.debug,
-  );// await Firebase.initializeApp();
+    androidProvider: AndroidProvider.debug,
+  ); // await Firebase.initializeApp();
   runApp(SignInCheck());
 }
+
 class SignInCheck extends StatefulWidget {
   SignInCheck({Key? key}) : super(key: key);
+
   @override
   _SignInCheckState createState() => _SignInCheckState();
 }
 
 class _SignInCheckState extends State<SignInCheck> {
-  var islogin;
+  late bool? islogin;
 
   checkUserLoginState() async {
     await Shared.getUserSharedPreferences().then((value) {
@@ -46,10 +46,14 @@ class _SignInCheckState extends State<SignInCheck> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('>>>>>>>>>>>>>>>>>>>>>>>>>>status$islogin');
+    debugPrint('>>>>>status$islogin');
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      home: islogin != null ? islogin ? HomePage() : Login() : Signup(),
+      home: islogin != null
+          ? islogin!
+              ? HomePage()
+              : Login()
+          : Signup(),
     );
   }
 }

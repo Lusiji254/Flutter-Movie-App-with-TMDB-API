@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_progress_hud/flutter_progress_hud.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:movie_db/ui/login.dart';
 
@@ -21,9 +23,13 @@ class _SignupState extends State<Signup> {
   final TextEditingController _passwordController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  bool isLoading = false;
 
   void _signup() async {
     try {
+      setState(() {
+        isLoading = true;
+      });
       final newUser = await _auth.createUserWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim());
@@ -39,11 +45,26 @@ class _SignupState extends State<Signup> {
       if (newUser != null) {
         print('success');
         // Navigator.pushNamed(context, 'login');
+        Fluttertoast.showToast(
+          msg: 'Signup successful',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.blueGrey,
+          textColor: Colors.white,
+        );
+
         Navigator.of(context)
             .push(MaterialPageRoute(builder: (context) => Login()));
       }
+      setState(() {
+        isLoading = true;
+      });
     } catch (e) {
       print(e);
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -198,8 +219,6 @@ class _SignupState extends State<Signup> {
                           contentPadding: EdgeInsets.symmetric(
                               vertical: 10.0, horizontal: 12.0),
                           labelStyle: GoogleFonts.poppins(fontSize: 16),
-                          // fillColor: Colors.grey,
-                          // filled: true,
                         ),
                         validator: (value) {
                           if (value!.isEmpty) {
@@ -279,7 +298,20 @@ class _SignupState extends State<Signup> {
                             );
                           }
                         },
-                        child: const Text('Signup'),
+                        child: isLoading
+                            ? Center(
+                                child: SpinKitFadingCircle(
+                                  color:
+                                      Colors.white, // Customize color as needed
+                                  size: 50.0, // Customize size as needed
+                                ),
+                              )
+                            : Text(
+                                'Signup',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 20,
+                                ),
+                              ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.deepOrange,
                           shape: RoundedRectangleBorder(

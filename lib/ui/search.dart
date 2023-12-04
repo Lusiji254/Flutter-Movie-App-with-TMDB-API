@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../models/toprated_model.dart';
 import 'movie_details.dart';
 import 'package:movie_db/services/movieApi.dart';
@@ -56,7 +55,7 @@ class _SearchState extends State<Search> {
     // final data = json.decode(response.body);
 
     if (response.statusCode == 200) {
-      debugPrint('SUCCESSSSSSSS');
+      debugPrint('SUCCESS');
       var results = Results.fromJson(jsonDecode(response.body));
       debugPrint('Results>>>${results.toString()}');
       return results;
@@ -97,12 +96,6 @@ class _SearchState extends State<Search> {
                       vertical: 10.0, horizontal: 12.0),
                   hintText: 'Search movies',
                   border: InputBorder.none,
-                  // focusedBorder: OutlineInputBorder(
-                  //   borderRadius: BorderRadius.circular(10.0),
-                  //   borderSide: BorderSide(
-                  //     color: Colors.deepOrange,
-                  //   ),
-                  // ),
                 ),
               ),
             ),
@@ -112,30 +105,63 @@ class _SearchState extends State<Search> {
                 itemBuilder: (context, index) {
                   final Results movie = _searchResults[index];
                   var description = movie.overview!;
-                  return ListTile(
-                    onTap: () async {
-                      final movieId = movie.id.toString();
-                      final Results? movieDetails =
-                          await getMovieDetails(movieId!);
-                      debugPrint('>>>>>WE ARE HERE!!!!!!!!!!!!!!!!');
-                      Navigator.of(context, rootNavigator: true).push(
-                        MaterialPageRoute(
-                          builder: (context) => MovieDetails(
-                            results: movieDetails!,
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () async {
+                            final movieId = movie.id.toString();
+                            final Results? movieDetails =
+                                await getMovieDetails(movieId!);
+                            Navigator.of(context, rootNavigator: true).push(
+                              MaterialPageRoute(
+                                builder: (context) => MovieDetails(
+                                  results: movieDetails!,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            width: 100.0,
+                            height: 150.0,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20.0),
+                              image: DecorationImage(
+                                fit: BoxFit.cover,
+                                image: NetworkImage(
+                                    'https://image.tmdb.org/t/p/w500/${movie.posterPath}'),
+                              ),
+                            ),
                           ),
                         ),
-                      );
-                    },
-                    title: Text(movie.title!, style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold ),),
-                    subtitle: Text(description.length > 100
-                        ? '${description.substring(0, 100)}...'
-                        : description,  style: GoogleFonts.poppins(color: Colors.white, )),
-                    leading: Image.network(
-                      'https://image.tmdb.org/t/p/w500/${movie.backdropPath}',
-                      width: 120,
-                      fit: BoxFit.cover,
+                        Expanded(
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  movie.title!,
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 4.0),
+                                Text(
+                                    description!.length > 100
+                                        ? '${description!.substring(0, 100)}...'
+                                        : description!,
+                                    style: TextStyle(color: Colors.grey)),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    contentPadding: EdgeInsets.fromLTRB(7, 10, 0, 10),
                   );
                 },
               ),

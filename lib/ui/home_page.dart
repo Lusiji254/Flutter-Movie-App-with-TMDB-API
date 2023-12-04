@@ -1,12 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:movie_db/ui/popular_movies.dart';
 import 'package:movie_db/ui/search.dart';
-import 'package:http/http.dart' as http;
-
+import 'nested_tabbar.dart';
 import 'now_playing.dart';
 
 class Home extends StatefulWidget {
@@ -19,7 +15,6 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> with TickerProviderStateMixin {
   late TabController _tabController;
   int selectedGenreId = 0; // Add this variable to store the selected genre ID
-
 
   @override
   void initState() {
@@ -96,7 +91,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Soon',
+                          'More',
                           style: GoogleFonts.poppins(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -119,9 +114,9 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                             TabBar(
                               controller: _tabController,
                               tabs: [
+                                buildTab('Upcoming'),
                                 buildTab('Popular'),
                                 buildTab('Top Rated'),
-                                buildTab('Upcoming'),
                               ],
                               labelColor: Colors.deepOrange,
                               unselectedLabelColor: Colors.white,
@@ -130,43 +125,53 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                                   fontSize: 16, fontWeight: FontWeight.bold),
                               unselectedLabelStyle: TextStyle(fontSize: 16),
                             ),
-
                             Expanded(
                               child: TabBarView(
                                 controller: _tabController,
                                 children: [
                                   // Content for Tab 1
-                                  NestedTabBar('Popular', (genreId) {
-                                    setState(() {
-                                      selectedGenreId = genreId;
-                                      debugPrint('>>>>Genre ID: ${selectedGenreId}');
-                                      // You can perform additional actions based on the selected genre if needed
-                                    });
+                                  NestedTabBar(
+                                    'Upcoming',
+                                    (genreId) {
+                                      setState(() {
+                                        selectedGenreId = genreId;
+                                        debugPrint(
+                                            '>>>>Genre ID: ${selectedGenreId}');
+                                        // You can perform additional actions based on the selected genre if needed
+                                      });
+                                    },
+                                    keyword: 'upcoming?',
+                                  ),
 
-                                  }, keyword: 'popular?',),
+                                  NestedTabBar(
+                                    'Popular',
+                                    (genreId) {
+                                      setState(() {
+                                        selectedGenreId = genreId;
+                                        debugPrint(
+                                            '>>>>Genre ID: ${selectedGenreId}');
+                                        // You can perform additional actions based on the selected genre if needed
+                                      });
+                                    },
+                                    keyword: 'popular?',
+                                  ),
 
-                                  NestedTabBar('TopRated', (genreId) {
-                                    setState(() {
-                                      selectedGenreId = genreId;
-                                      debugPrint('>>>>Genre ID: ${selectedGenreId}');
-                                      // You can perform additional actions based on the selected genre if needed
-                                    });
-
-                                  }, keyword: 'top_rated?',),
-
-                                  NestedTabBar('Upcoming', (genreId) {
-                                    setState(() {
-                                      selectedGenreId = genreId;
-                                      debugPrint('>>>>Genre ID: ${selectedGenreId}');
-                                      // You can perform additional actions based on the selected genre if needed
-                                    });
-
-                                  }, keyword: 'upcoming?',),
+                                  NestedTabBar(
+                                    'TopRated',
+                                    (genreId) {
+                                      setState(() {
+                                        selectedGenreId = genreId;
+                                        debugPrint(
+                                            '>>>>Genre ID: ${selectedGenreId}');
+                                        // You can perform additional actions based on the selected genre if needed
+                                      });
+                                    },
+                                    keyword: 'top_rated?',
+                                  ),
                                 ],
                               ),
                             ),
-
-                                                     ],
+                          ],
                         ),
                       ),
                     ),
@@ -195,120 +200,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
           ),
         ),
       ),
-    );
-  }
-}
-
-class NestedTabBar extends StatefulWidget {
-  const NestedTabBar(this.outerTab, this.onGenreSelected, {Key? key, required this.keyword})
-      : super(key: key);
-
-  final String outerTab;
-  final void Function(int) onGenreSelected;
-  final String keyword;
-
-  @override
-  State<NestedTabBar> createState() => _NestedTabBarState();
-}
-
-class _NestedTabBarState extends State<NestedTabBar>
-    with TickerProviderStateMixin {
-  late TabController _tabController;
-  List<Map<String, dynamic>> genreList = [];
-  bool isLoading = true;
-  final apiKey = '14bf3761ec6892a715b5655eaf54fecc'; // Replace with your actual API key
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(
-        length: 1, vsync: this); // Initialize with a default length
-    _loadGenres();
-  }
-
-  Future<void> _loadGenres() async {
-    try {
-      final response = await http.get(
-        Uri.parse(
-          'https://api.themoviedb.org/3/genre/movie/list'
-              '?api_key=$apiKey',
-        ),
-      );
-
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body);
-        genreList = List<Map<String, dynamic>>.from(data['genres']);
-        if (mounted) {
-          setState(() {
-            isLoading = false;
-            _tabController = TabController(length: genreList.length, vsync: this);
-          });
-        }
-      } else {
-        throw Exception(response.statusCode.toString());
-      }
-    } catch (error) {
-      print('Error: $error');
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-      }
-    }
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
-
-  int getGenreIdByName(String genreName) {
-    final genre = genreList.firstWhere(
-          (g) => g['name'] == genreName,
-      orElse: () => {'id': 0, 'name': ''},
-    );
-    return (genre['id'] ?? 0) as int;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return isLoading
-        ? CircularProgressIndicator(color: Colors.deepOrange)
-        : genreList.isEmpty
-        ? Text('No genres available', style: TextStyle(color: Colors.white))
-        : Column(
-      children: <Widget>[
-        TabBar(
-          indicatorColor: Colors.deepOrange,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white,
-          controller: _tabController,
-          isScrollable: true,
-          tabs: genreList.map((genre) {
-            return Tab(
-              text: genre['name'],
-            );
-          }).toList(),
-          onTap: (index) {
-            if (_tabController != null) {
-              final genreId = getGenreIdByName(genreList[index]['name']);
-              widget.onGenreSelected(genreId);
-              //Movies.updateSelectedGenre(genreId); // Update selectedGenreId here
-
-            }
-          },
-        ),
-        Expanded(
-          child: TabBarView(
-            controller: _tabController,
-            children: genreList.map((genre) {
-              final genreId = getGenreIdByName(genre['name']);
-              return Movies(selectedGenreId: genreId, keyword: widget.keyword ,);
-            }).toList(),
-          ),
-        ),
-      ],
     );
   }
 }

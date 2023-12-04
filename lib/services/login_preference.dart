@@ -1,7 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Shared {
-  static String loginSharedPreference = "LOGGEDINKEY";
+  static String loginSharedPreference = "islogin";
 
 // save data
 
